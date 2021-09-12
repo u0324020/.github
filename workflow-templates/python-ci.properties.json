@@ -4,10 +4,5 @@
     "iconName": "cat_icon",
     "categories": [
         "Python"
-    ],
-    "filePatterns": [
-        "package.json$",
-        "^Dockerfile",
-        ".*\\.md$"
     ]
 }
