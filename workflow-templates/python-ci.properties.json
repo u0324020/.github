@@ -1,0 +1,13 @@
+{
+    "name": "Jane Python CI Workflow",
+    "description": "Jane Organization Python CI workflow template.",
+    "iconName": "cat_icon",
+    "categories": [
+        "Python"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.md$"
+    ]
+}
