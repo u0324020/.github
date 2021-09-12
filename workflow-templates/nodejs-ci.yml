@@ -1,0 +1,78 @@
+name: NodeJS-CI
+
+on: [push, workflow_dispatch]
+
+jobs:
+  ci-job:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js 12.22
+      uses: actions/setup-node@v2
+      with:
+        node-version: 12.22
+
+    # combination of various linters
+    # help validate your source code
+    - name: Super-Linter
+      uses: github/super-linter@v4
+      env:
+        VALIDATE_ALL_CODEBASE: false # scan change parts
+        DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        VALIDATE_JAVASCRIPT_STANDARD: true #js
+        VALIDATE_DOCKERFILE: true
+
+    - name: npm install package
+      run: |
+        npm install
+        npm install -g mocha
+        npm install -g mocha-junit-reporter
+        npm install -g express-generator
+        
+    - name: Test with chai
+      run: mocha test --reporter mocha-junit-reporter
+
+    - name: Publish unit test results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: '*.xml'
+        report_individual_runs: "true"
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: javascript
+
+    - name: Build package
+      run: |
+        express myExpressApp --view pug
+        cd myExpressApp
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
+
+    - run: cd ..
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: artifact
+        path: .
+
+    - name: Docker Hub login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build Docker Image
+      run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/janedockerrepo:${{ github.sha }}
+
+    - name: Push Docker Image to Registry
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/janedockerrepo:${{ github.sha }}

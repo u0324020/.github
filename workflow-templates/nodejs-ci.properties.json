@@ -1,0 +1,8 @@
+{
+    "name": "Jane NodeJS CI Workflow",
+    "description": "Jane Organization NodeJS CI workflow template.",
+    "iconName": "cat_icon",
+    "categories": [
+        "JavaScript"
+    ]
+}

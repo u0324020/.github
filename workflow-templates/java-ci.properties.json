@@ -1,0 +1,8 @@
+{
+    "name": "Jane Java CI Workflow",
+    "description": "Jane Organization Java CI workflow template.",
+    "iconName": "cat_icon",
+    "categories": [
+        "Java"
+    ]
+}
